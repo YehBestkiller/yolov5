@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+# makes sure depedencies for pycoq are installed once already in the docker image
+ENV WANDB_API_KEY="fc25819309bcf36a799341925c3b5695afa1de8d"
+RUN pip install wandb --upgrade 

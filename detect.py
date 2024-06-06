@@ -68,8 +68,8 @@ from utils.torch_utils import select_device, smart_inference_mode
 
 @smart_inference_mode()
 def run(
-    weights=ROOT / "yolov5s.pt",  # model path or triton URL
-    source=ROOT / "data/images",  # file/dir/URL/glob/screen/0(webcam)
+    weights=ROOT / "runs/train/hotBed_yolov5s_epochs400_dataset292_changeMoreHSV/weights/best.pt",  # model path or triton URL default:"yolov5s.pt"
+    source=ROOT / "data/hotBedPic/01_00005.jpg",  # file/dir/URL/glob/screen/0(webcam) default:"data/images"
     data=ROOT / "data/coco128.yaml",  # dataset.yaml path
     imgsz=(640, 640),  # inference size (height, width)
     conf_thres=0.25,  # confidence threshold
@@ -77,7 +77,7 @@ def run(
     max_det=1000,  # maximum detections per image
     device="",  # cuda device, i.e. 0 or 0,1,2,3 or cpu
     view_img=False,  # show results
-    save_txt=False,  # save results to *.txt
+    save_txt=True,  # save results to *.txt 
     save_csv=False,  # save results in CSV format
     save_conf=False,  # save confidences in --save-txt labels
     save_crop=False,  # save cropped prediction boxes
@@ -210,10 +210,13 @@ def run(
                         write_to_csv(p.name, label, confidence_str)
 
                     if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
-                        with open(f"{txt_path}.txt", "a") as f:
-                            f.write(("%g " * len(line)).rstrip() % line + "\n")
+                        # xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
+                        # line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
+                        line01 = (cls, *xyxy, conf) if save_conf else (cls, *xyxy) # by yinlibo
+                        # with open(f"{txt_path}.txt", "a") as f:
+                            # f.write(("%g " * len(line)).rstrip() % line + "\n")
+                        with open(f"{txt_path}_cls_xyxy.txt", "a") as f:  # by yinlibo
+                            f.write(("%g " * len(line01)).rstrip() % line01 + "\n")  # by yinlibo
 
                     if save_img or save_crop or view_img:  # Add bbox to image
                         c = int(cls)  # integer class
